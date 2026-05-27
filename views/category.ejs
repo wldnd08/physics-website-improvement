@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= category.name %> - 물리학 개념 저장소</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <h1><%= category.name %></h1>
+        <a href="/" style="color: white; text-decoration: none;">← 홈으로 돌아가기</a>
+    </header>
+
+    <main>
+        <!-- 새 개념 추가 폼 -->
+        <section class="add-form">
+            <h3>새로운 물리 개념 추가하기</h3>
+            <form action="/add-concept" method="POST">
+                <input type="hidden" name="category_id" value="<%= category.id %>">
+                <input type="text" name="title" placeholder="개념 제목 (예: 뉴턴의 제2법칙)" required>
+                <textarea name="content" placeholder="개념에 대한 설명을 입력하세요..." rows="5" required></textarea>
+                <button type="submit">등록하기</button>
+            </form>
+        </section>
+
+        <hr>
+
+        <!-- 개념 목록 -->
+        <div class="concept-list">
+            <% if (concepts.length === 0) { %>
+                <p>등록된 개념이 없습니다. 첫 번째 개념을 등록해보세요!</p>
+            <% } %>
+
+            <% concepts.forEach(concept => { %>
+                <article class="concept-card" style="position: relative;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <h2 style="margin-top: 0;"><%= concept.title %></h2>
+                        <form action="/delete-concept" method="POST" onsubmit="return confirm('정말 이 개념을 삭제하시겠습니까?');">
+                            <input type="hidden" name="concept_id" value="<%= concept.id %>">
+                            <input type="hidden" name="category_id" value="<%= category.id %>">
+                            <button type="submit" style="background: #e74c3c; padding: 0.3rem 0.6rem; font-size: 0.8rem;">삭제</button>
+                        </form>
+                    </div>
+                    <p style="white-space: pre-wrap;"><%= concept.content %></p>
+                    
+                    <div class="comment-section">
+                        <h4>댓글</h4>
+                        <!-- 댓글 목록 -->
+                        <div id="comments-<%= concept.id %>">
+                            <% if (concept.comments && concept.comments.length > 0) { %>
+                                <% concept.comments.forEach(comment => { %>
+                                    <div style="margin-bottom: 0.5rem; border-bottom: 1px dashed #ddd; padding-bottom: 0.3rem; display: flex; justify-content: space-between; align-items: center;">
+                                        <span><strong><%= comment.author %></strong>: <%= comment.comment %></span>
+                                        <form action="/delete-comment" method="POST" onsubmit="return confirm('이 댓글을 삭제하시겠습니까?');" style="margin: 0;">
+                                            <input type="hidden" name="comment_id" value="<%= comment.id %>">
+                                            <input type="hidden" name="category_id" value="<%= category.id %>">
+                                            <button type="submit" style="background: none; color: #e74c3c; padding: 0; border: none; font-size: 0.8rem; cursor: pointer;">[삭제]</button>
+                                        </form>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <p style="color: #888;">아직 댓글이 없습니다.</p>
+                            <% } %>
+                        </div>
+
+                        <!-- 댓글 작성 폼 -->
+                        <form action="/add-comment" method="POST" style="margin-top: 1rem;">
+                            <input type="hidden" name="concept_id" value="<%= concept.id %>">
+                            <input type="hidden" name="category_id" value="<%= category.id %>">
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="text" name="author" placeholder="이름" style="width: 30%;" required>
+                                <input type="text" name="comment" placeholder="댓글을 입력하세요" style="width: 55%;" required>
+                                <button type="submit" style="width: 15%; padding: 0.5rem;">등록</button>
+                            </div>
+                        </form>
+                    </div>
+                </article>
+            <% }) %>
+        </div>
+    </main>
+</body>
+</html>

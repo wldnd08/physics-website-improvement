@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>물리학 개념 저장소</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <h1>물리학 개념 저장소</h1>
+        <p>고등학생을 위한 4대 물리 영역 탐구</p>
+    </header>
+
+    <main>
+        <div class="category-grid">
+            <% categories.forEach(category => { %>
+                <a href="/category/<%= category.id %>" class="category-card">
+                    <%= category.name %>
+                </a>
+            <% }) %>
+        </div>
+    </main>
+</body>
+</html>
